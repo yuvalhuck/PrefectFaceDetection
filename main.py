@@ -1,3 +1,4 @@
+
 from prefect import flow, task
 from prefect.tasks import exponential_backoff
 import requests
@@ -7,8 +8,9 @@ import uuid
 import torch
 from facenet_pytorch import MTCNN
 from PIL import Image
-import os
 import pymongo
+import shutil
+import os
 
 MONGODB_CONNECTION_STRING = "mongodb://localhost:27017/"
 IMAGES_DIRECTORY = "downloaded_images"
@@ -202,6 +204,7 @@ def url_faces_people_detection_flow(url):
         faces_people_assignment = assign_faces_to_people.submit(people_xyxy, faces_xyxy)
         store_image_results.submit(image_url, people_xyxy, faces_xyxy, faces_people_assignment, flow_run_id)
 
+    shutil.rmtree(images_location)
     print(f"Finished processing images from {url}, flow run ID: {flow_run_id}")
 
 
